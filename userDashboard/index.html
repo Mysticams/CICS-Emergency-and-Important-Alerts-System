@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CICS AlertSOS | Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#E53E3E',
+            secondary: '#FEE2E2',
+            accent: '#F87171'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      display: flex;
+      background-color: #f9fafb;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+      margin-left: 16rem; /* desktop sidebar width */
+      margin-top: 4rem; /* navbar height */
+      padding: 2rem;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Navbar */
+    custom-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 300; /* always on top */
+    }
+
+    /* Sidebar */
+    custom-sidebar nav {
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      width: 16rem;
+      height: calc(100% - 4rem);
+      background-color: transparent; /* removed white background */
+      transition: transform 0.3s ease;
+      z-index: 100; /* below navbar */
+      box-shadow: none; /* removed white box shadow block */
+      transform: translateX(0);
+    }
+
+    custom-sidebar nav.active {
+      transform: translateX(0);
+    }
+
+    /* Mobile & tablet styles */
+    @media (max-width: 1024px) {
+      main {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      custom-sidebar nav {
+        transform: translateX(-100%);
+        width: 80%;
+        z-index: 200;
+        background-color: rgba(255, 255, 255, 0.95); /* subtle white only when opened on mobile */
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      #navbarToggle {
+        display: block;
+        z-index: 310;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+    }
+
+    /* SOS button */
+    #sosBtn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 150;
+    }
+
+    /* Hide toggle by default */
+    #navbarToggle {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+ 
+  <!-- Navbar -->
+  <custom-navbar style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  ">
+    <div class="flex justify-between items-center p-4">
+      <h1 class="text-xl font-bold text-gray-800">CICS AlertSOS</h1>
+      <button id="navbarToggle" class="lg:hidden p-2 z-[1000]">
+        <i data-feather="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </custom-navbar>
+
+  <!-- Sidebar -->
+  <custom-sidebar style="
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    width: 16rem;
+    height: calc(100% - 4rem);
+    background-color: transparent; /* transparent sidebar */
+    transition: transform 0.3s ease;
+    z-index: 100;
+  ">
+    <nav id="sidebarMenu" class="flex flex-col p-4 space-y-2">
+      <a href="#" class="text-gray-700 hover:text-primary">Dashboard</a>
+      <a href="#" class="text-gray-700 hover:text-primary">Alerts</a>
+      <a href="#" class="text-gray-700 hover:text-primary">SOS Logs</a>
+      <a href="#" class="text-gray-700 hover:text-primary">Settings</a>
+    </nav>
+  </custom-sidebar>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Current Date -->
+    <div id="currentDate" class="flex justify-end mb-4">
+      <div class="flex items-center bg-white border border-gray-300 rounded-xl shadow px-4 py-2 text-gray-800">
+        <i data-feather="calendar" class="text-primary mr-2 w-4 h-4"></i>
+        <span id="dateText" class="text-sm font-semibold"></span>
+      </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <section class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-8">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center flex-wrap gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">
+            Welcome back, <span class="text-primary">John Doe</span>
+          </h1>
+          <p class="text-gray-600">Faculty | john.doe@cics.edu</p>
+        </div>
+        <div class="flex flex-wrap gap-4">
+          <div class="bg-secondary px-6 py-4 rounded-lg text-center flex-1 min-w-[120px]">
+            <p class="text-sm text-gray-600">Alerts Received</p>
+            <p class="text-2xl font-bold text-primary">24</p>
+          </div>
+          <div class="bg-secondary px-6 py-4 rounded-lg text-center flex-1 min-w-[120px]">
+            <p class="text-sm text-gray-600">Acknowledged</p>
+            <p class="text-2xl font-bold text-primary">18</p>
+          </div>
+          <div class="bg-secondary px-6 py-4 rounded-lg text-center flex-1 min-w-[120px]">
+            <p class="text-sm text-gray-600">Active SOS</p>
+            <p class="text-2xl font-bold text-primary">0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notification & Filter Panel -->
+    <section class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2 sm:gap-0">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <i data-feather="bell"></i> Notifications
+        </h2>
+        <select id="alertFilter" class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-primary focus:border-primary">
+          <option value="all">All Alerts</option>
+          <option value="high">High Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Low Priority</option>
+        </select>
+      </div>
+
+      <div id="alertsList" class="space-y-4">
+        <div class="alert-card border-l-4 border-primary bg-secondary p-4 rounded-r-lg" data-priority="high">
+          <div class="flex justify-between items-start flex-wrap gap-2">
+            <div>
+              <h3 class="font-bold text-gray-800">Campus Lockdown</h3>
+              <p class="text-gray-600 text-sm">
+                Due to security concerns, the campus will be on lockdown until further notice.
+              </p>
+            </div>
+            <span class="text-sm text-gray-500">10 min ago</span>
+          </div>
+        </div>
+
+        <div class="alert-card border-l-4 border-yellow-500 bg-yellow-100 p-4 rounded-r-lg" data-priority="medium">
+          <div class="flex justify-between items-start flex-wrap gap-2">
+            <div>
+              <h3 class="font-bold text-gray-800">Weather Advisory</h3>
+              <p class="text-gray-600 text-sm">
+                Heavy rains expected this afternoon. Classes after 3PM are canceled.
+              </p>
+            </div>
+            <span class="text-sm text-gray-500">2 hours ago</span>
+          </div>
+        </div>
+
+        <div class="alert-card border-l-4 border-green-500 bg-green-100 p-4 rounded-r-lg" data-priority="low">
+          <div class="flex justify-between items-start flex-wrap gap-2">
+            <div>
+              <h3 class="font-bold text-gray-800">System Update</h3>
+              <p class="text-gray-600 text-sm">
+                Minor app updates and bug fixes have been deployed successfully.
+              </p>
+            </div>
+            <span class="text-sm text-gray-500">1 day ago</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent SOS Logs -->
+    <section class="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-8">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <i data-feather="activity"></i> Recent SOS Logs
+        </h2>
+        <a href="sosLogs.html" class="text-primary hover:underline text-sm">View All</a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg">
+          <thead class="bg-secondary">
+            <tr>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date & Time</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Location</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr>
+              <td class="py-3 px-4 text-sm text-gray-700">Oct 21, 2025 - 3:45 PM</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Main Campus, Gate 2</td>
+              <td class="py-3 px-4 text-sm text-red-600 font-medium">Acknowledged</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 text-sm text-gray-700">Oct 18, 2025 - 8:22 PM</td>
+              <td class="py-3 px-4 text-sm text-gray-700">CICS Building, Room 204</td>
+              <td class="py-3 px-4 text-sm text-green-600 font-medium">Resolved</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- SOS Button -->
+  <button
+    id="sosBtn"
+    class="bg-primary hover:bg-red-700 text-white rounded-full p-6 shadow-lg transform transition hover:scale-110"
+  >
+    <i data-feather="alert-triangle" class="w-8 h-8"></i>
+  </button>
+
+  <!-- Scripts -->
+  <script src="components/navbar.js"></script>
+  <script src="components/sidebar.js"></script>
+
+  <script>
+    feather.replace();
+
+    // Display current date
+    const dateText = document.getElementById('dateText');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const today = new Date();
+    dateText.textContent = today.toLocaleDateString('en-US', options);
+
+    // SOS button
+    document.getElementById('sosBtn').addEventListener('click', function() {
+      if (confirm('🚨 Send SOS Alert now?')) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            alert('🚨 SOS Sent! Location shared with CICS admins.');
+            console.log('Coordinates:', position.coords.latitude, position.coords.longitude);
+          });
+        } else {
+          alert('Geolocation not supported.');
+        }
+      }
+    });
+
+    // Filter alerts
+    document.getElementById('alertFilter').addEventListener('change', function() {
+      const selected = this.value;
+      const alerts = document.querySelectorAll('.alert-card');
+      alerts.forEach(alert => {
+        alert.style.display = selected === 'all' || alert.dataset.priority === selected ? 'block' : 'none';
+      });
+    });
+
+    // Mobile sidebar toggle
+    const sidebar = document.getElementById('sidebarMenu');
+    const toggleBtn = document.getElementById('navbarToggle');
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      sidebar.classList.toggle('-translate-x-full');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CICS AlertSOS | SOS Logs</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#E53E3E',
+            secondary: '#FEE2E2',
+            accent: '#F87171'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: #f9fafb;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Layout */
+    main {
+      flex: 1;
+      margin-left: 16rem;
+      margin-top: 4rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    /* Navbar fixed top */
+    custom-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; /* Navbar above sidebar */
+      background-color: #fff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* Sidebar fixed left */
+    custom-sidebar {
+      position: fixed;
+      top: 0; /* aligned directly below navbar visually */
+      left: 0;
+      width: 16rem;
+      height: 100%;
+      z-index: 900; /* below navbar */
+      background-color: #fff;
+      border-right: 1px solid #e5e7eb;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    /* Overlay for mobile */
+    #sidebarOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 800;
+      display: none;
+    }
+
+    /* Desktop behavior (>=1024px) */
+    @media (min-width: 1024px) {
+      body {
+        flex-direction: row;
+      }
+
+      main {
+        margin-left: 16rem;
+        margin-top: 4rem;
+        padding: 2rem;
+      }
+
+      custom-sidebar {
+        transform: translateX(0);
+      }
+
+      #sidebarOverlay {
+        display: none !important;
+      }
+    }
+
+    /* Medium screens (768px - 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      main {
+        margin-left: 13rem;
+        margin-top: 4rem;
+        padding: 1.5rem;
+      }
+
+      custom-sidebar {
+        width: 13rem;
+      }
+    }
+
+    /* Mobile (<768px) */
+    @media (max-width: 767px) {
+      main {
+        margin-left: 0;
+        margin-top: 4.5rem;
+        padding: 1rem;
+      }
+
+      custom-sidebar {
+        transform: translateX(-100%);
+        width: 14rem;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+      }
+
+      custom-sidebar.open {
+        transform: translateX(0);
+      }
+
+      #sidebarOverlay.active {
+        display: block;
+      }
+    }
+
+    /* Table responsive tweaks */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      th, td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+
+      h1 {
+        font-size: 1.25rem !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <custom-navbar></custom-navbar>
+
+  <!-- Sidebar -->
+  <custom-sidebar></custom-sidebar>
+
+  <!-- Overlay for mobile -->
+  <div id="sidebarOverlay"></div>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i data-feather="activity" class="text-primary"></i> SOS Logs
+      </h1>
+
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <input
+          id="searchInput"
+          type="text"
+          placeholder="Search by location..."
+          class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-primary focus:border-primary w-full sm:w-auto"
+        />
+        <select
+          id="statusFilter"
+          class="border border-gray-300 rounded-lg p-2 text-sm focus:ring-primary focus:border-primary w-full sm:w-auto"
+        >
+          <option value="all">All Status</option>
+          <option value="sent">Sent</option>
+          <option value="acknowledged">Acknowledged</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SOS Logs Table -->
+    <div class="bg-white rounded-xl shadow-md p-4 sm:p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-lg">
+          <thead class="bg-secondary">
+            <tr>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">#</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Date & Time</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Location</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Coordinates</th>
+              <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Status</th>
+            </tr>
+          </thead>
+          <tbody id="sosTableBody" class="divide-y divide-gray-200">
+            <tr data-status="acknowledged">
+              <td class="py-3 px-4 text-sm text-gray-700">1</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Oct 21, 2025 - 3:45 PM</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Main Campus, Gate 2</td>
+              <td class="py-3 px-4 text-sm text-gray-700">13.7563° N, 121.0583° E</td>
+              <td class="py-3 px-4 text-sm font-medium text-red-600">Acknowledged</td>
+            </tr>
+            <tr data-status="resolved">
+              <td class="py-3 px-4 text-sm text-gray-700">2</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Oct 18, 2025 - 8:22 PM</td>
+              <td class="py-3 px-4 text-sm text-gray-700">CICS Building, Room 204</td>
+              <td class="py-3 px-4 text-sm text-gray-700">13.7541° N, 121.0612° E</td>
+              <td class="py-3 px-4 text-sm font-medium text-green-600">Resolved</td>
+            </tr>
+            <tr data-status="sent">
+              <td class="py-3 px-4 text-sm text-gray-700">3</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Oct 10, 2025 - 7:55 PM</td>
+              <td class="py-3 px-4 text-sm text-gray-700">Library, 2nd Floor</td>
+              <td class="py-3 px-4 text-sm text-gray-700">13.7570° N, 121.0599° E</td>
+              <td class="py-3 px-4 text-sm font-medium text-yellow-600">Sent</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Components -->
+  <script src="components/navbar.js"></script>
+  <script src="components/sidebar.js"></script>
+
+  <script>
+    feather.replace();
+
+    // Search & Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const tableBody = document.getElementById('sosTableBody');
+
+    function filterSOS() {
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedStatus = statusFilter.value;
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const location = row.children[2].textContent.toLowerCase();
+        const status = row.dataset.status;
+        const matchesSearch = location.includes(searchValue);
+        const matchesStatus = selectedStatus === 'all' || status === selectedStatus;
+        row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+      });
+    }
+
+    searchInput.addEventListener('input', filterSOS);
+    statusFilter.addEventListener('change', filterSOS);
+
+    // Sidebar toggle logic
+    const sidebar = document.querySelector('custom-sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    window.addEventListener('toggle-sidebar', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    });
+  </script>
+</body>
+</html>

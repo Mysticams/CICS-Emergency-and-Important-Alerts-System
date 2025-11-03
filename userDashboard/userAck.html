@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CICS AlertSOS | User Acknowledge</title>
+
+<!-- Tailwind + Bootstrap -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://unpkg.com/feather-icons"></script>
+
+<style>
+  body { background: #fff5f5; }
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-center items-center p-4">
+
+<div class="w-full max-w-md bg-white shadow-lg p-6 rounded-xl border-t-4 border-red-600 text-center">
+  <i data-feather="alert-triangle" class="w-12 h-12 text-red-600 mx-auto mb-4"></i>
+  <h2 id="alertTitle" class="text-2xl font-semibold text-red-700 mb-2">🚨 Fire reported near CICS building</h2>
+  <p id="alertMsg" class="text-gray-700 mb-4">Please acknowledge this alert to notify the admin.</p>
+
+  <div id="actionArea">
+    <button id="ackBtn" class="btn btn-danger w-full py-2">Acknowledge</button>
+  </div>
+
+  <div id="doneMsg" class="text-green-700 font-semibold mt-4 hidden">✅ You have acknowledged this alert. Thank you!</div>
+</div>
+
+<script>
+  feather.replace();
+
+  // Simulated user (change id & name to simulate different users)
+  const user = { id: "U001", name: "Alice" };
+
+  // Initialize acknowledgment data if not exists
+  if (!localStorage.getItem("ackData")) {
+    const users = [
+      { id: "U001", name: "Alice", ack: false, time: null },
+      { id: "U002", name: "Bob", ack: false, time: null },
+      { id: "U003", name: "Charlie", ack: false, time: null },
+      { id: "U004", name: "David", ack: false, time: null },
+    ];
+    localStorage.setItem("ackData", JSON.stringify(users));
+  }
+
+  const ackBtn = document.getElementById("ackBtn");
+  const doneMsg = document.getElementById("doneMsg");
+
+  ackBtn.addEventListener("click", () => {
+    const data = JSON.parse(localStorage.getItem("ackData")) || [];
+    const idx = data.findIndex(u => u.id === user.id);
+    if (idx !== -1) {
+      data[idx].ack = true;
+      data[idx].time = Date.now();
+      localStorage.setItem("ackData", JSON.stringify(data));
+      // Optional: trigger a separate token for storage event
+      localStorage.setItem("ack_event", JSON.stringify({ id: user.id, name: user.name, time: Date.now() }));
+
+      // Update UI
+      ackBtn.style.display = "none";
+      doneMsg.classList.remove("hidden");
+    }
+  });
+</script>
+
+</body>
+</html>
