@@ -34,6 +34,8 @@ class CustomSidebar extends HTMLElement {
           transform: translateX(0);
           transition: transform 0.3s ease-in-out;
           z-index: 950;
+          display: flex;
+          flex-direction: column;
           overflow-y: auto;
         }
 
@@ -52,6 +54,7 @@ class CustomSidebar extends HTMLElement {
           display: flex;
           flex-direction: column;
           padding: 1rem 0;
+          flex: 1;
         }
 
         .menu-item {
@@ -77,10 +80,20 @@ class CustomSidebar extends HTMLElement {
           font-weight: 600;
         }
 
+        /* Hover only for non-active items */
+        .menu-item.active:hover {
+          background-color: #7F1D1D;
+        }
+
         .menu-divider {
           height: 1px;
           background-color: #991B1B;
           margin: 0.75rem 1.5rem;
+        }
+
+        /* Logout at bottom */
+        .menu-item.logout {
+          margin-top: 10rem;
         }
 
         /* ===== Feather icons ===== */
@@ -108,17 +121,17 @@ class CustomSidebar extends HTMLElement {
         <div class="sidebar-menu">
           <a href="index.html" class="menu-item active"><i data-feather="home"></i><span>Dashboard</span></a>
           <a href="sendAlert.html" class="menu-item"><i data-feather="send"></i><span>Send Alert</span></a>
-          <a href="#" class="menu-item"><i data-feather="check-square"></i><span>Acknowledgment</span></a>
-          <a href="sosMonitoring.html" class="menu-item"><i data-feather="alert-triangle"></i><span>SOS Monitoring</span></a>
-          <a href="admin_hotlines.html" class="menu-item"><i data-feather="users"></i><span>Emergency Hotlines</span></a>
-          <a href="#" class="menu-item"><i data-feather="mail"></i><span>Communications</span></a>
-          <a href="adminAck.html" class="menu-item"><i data-feather="mail"></i><span>Alerts Acknowledgement</span></a>
-          <a href="#" class="menu-item"><i data-feather="activity"></i><span>Analytics</span></a>
+          <a href="trackingAcknowledgement.html" class="menu-item"><i data-feather="check-square"></i><span>Acknowledgment</span></a>
+          <a href="sosMonitoring.html" class="menu-item"><i data-feather="alert-circle"></i><span>SOS Monitoring</span></a>
+          <a href="incidentReport.html" class="menu-item"><i data-feather="file-text"></i><span>Incident Report</span></a>
+          <a href="analytics.html" class="menu-item"><i data-feather="bar-chart-2"></i></i><span>Analytics</span></a>
+          <a href="activityLogs.html" class="menu-item"><i data-feather="layers"></i><span>Activity Logs</span></a>
+          <a href="admin_hotlines.html" class="menu-item"><i data-feather="phone-call"></i><span>Emergency Hotlines</span></a>
+          <a href="settings.html" class="menu-item"><i data-feather="settings"></i><span>Settings</span></a>
 
           <div class="menu-divider"></div>
 
-          <a href="#" class="menu-item"><i data-feather="settings"></i><span>Settings</span></a>
-          <a href="#" class="menu-item"><i data-feather="log-out"></i><span>Logout</span></a>
+          <a href="#" class="menu-item logout"><i data-feather="log-out"></i><span>Logout</span></a>
         </div>
       </aside>
     `;

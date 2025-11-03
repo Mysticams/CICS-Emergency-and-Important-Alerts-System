@@ -49,6 +49,7 @@ class CustomSidebar extends HTMLElement {
           display: flex;
           flex-direction: column;
           padding: 1rem;
+          height: 100%; /* allow flex items to stretch */
         }
 
         .menu-item {
@@ -76,7 +77,11 @@ class CustomSidebar extends HTMLElement {
         .menu-divider {
           height: 1px;
           background-color: #991B1B;
-          margin: 1rem 0;
+          margin: 1rem 0; /* small space above and below */
+        }
+
+        .menu-item.logout {
+          margin-top: 14rem;
         }
 
         i {
@@ -88,15 +93,14 @@ class CustomSidebar extends HTMLElement {
       <aside id="sidebar">
         <div class="sidebar-menu">
           <a href="index.html" class="menu-item active"><i data-feather="home"></i><span>Dashboard</span></a>
-          <a href="alerts.html" class="menu-item"><i data-feather="bell"></i><span>Alerts</span></a>
-          <a href="sos.html" class="menu-item"><i data-feather="alert-triangle"></i><span>SOS Button</span></a>
-          <a href="userAck.html" class="menu-item"><i data-feather="alert-triangle"></i><span>Acknowledgement</span></a>
-          <a href="sosLogs.html" class="menu-item"><i data-feather="file-text"></i><span>SOS Logs</span></a>
-          <a href="incidentReport.html" class="menu-item"><i data-feather="clipboard"></i><span>Incident Report</span></a>
+          <a href="alerts.html" class="menu-item"><i data-feather="bell"></i><span>All Alerts</span></a>
+          <a href="sos.html" class="menu-item"><i data-feather="alert-circle"></i><span>SOS Button</span></a>
+          <a href="userAck.html" class="menu-item"><i data-feather="message-circle"></i><span>Announcements</span></a>
+          <a href="incidentReport.html" class="menu-item"><i data-feather="file-text"></i><span>Incident Report</span></a>
           <a href="user_hotlines.html" class="menu-item"><i data-feather="phone-call"></i><span>Emergency Hotlines</span></a>
-          <a href="profile.html" class="menu-item"><i data-feather="user"></i><span>Profile</span></a>
+          <a href="settings.html" class="menu-item"><i data-feather="settings"></i><span>Settings</span></a>
           <div class="menu-divider"></div>
-          <a href="#" class="menu-item"><i data-feather="log-out"></i><span>Logout</span></a>
+          <a href="#" class="menu-item logout"><i data-feather="log-out"></i><span>Logout</span></a>
         </div>
       </aside>
     `;
@@ -104,16 +108,19 @@ class CustomSidebar extends HTMLElement {
     const overlay = this.shadowRoot.querySelector('.overlay');
     const aside = this.shadowRoot.querySelector('aside');
 
+    // Replace feather icons
     this.shadowRoot.querySelectorAll('i').forEach(icon => {
       const name = icon.getAttribute('data-feather');
       icon.outerHTML = feather.icons[name].toSvg();
     });
 
+    // Toggle sidebar for small screens
     window.addEventListener('toggle-sidebar', () => {
       aside.classList.toggle('open');
       overlay.classList.toggle('show');
     });
 
+    // Close sidebar when clicking overlay
     overlay.addEventListener('click', () => {
       aside.classList.remove('open');
       overlay.classList.remove('show');

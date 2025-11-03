@@ -32,6 +32,13 @@ class CustomNavbar extends HTMLElement {
           color: #dc2626;
         }
 
+        .logo-img {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          margin-right: 0.5rem;
+        }
+
         .user-menu {
           display: flex;
           align-items: center;
@@ -147,7 +154,7 @@ class CustomNavbar extends HTMLElement {
 
       <nav>
         <div class="logo">
-          <i data-feather="alert-octagon" class="logo-icon"></i>
+          <img src="../bsu.png" alt="CICS Logo" class="logo-img" />
           <span>CICS Emergency & Important Alerts</span>
         </div>
         <div class="user-menu">
@@ -161,9 +168,8 @@ class CustomNavbar extends HTMLElement {
             <span class="notification-badge">3</span>
           </div>
           <div class="dropdown-menu" id="dropdownMenu">
-            <a href="#" class="dropdown-item">Profile</a>
-            <a href="#" class="dropdown-item">Settings</a>
-            <a href="#" class="dropdown-item">Logout</a>
+            <a href="settings.html" class="dropdown-item">Profile</a>
+            <a href="index.html" class="dropdown-item">Logout</a>
           </div>
         </div>
       </nav>
