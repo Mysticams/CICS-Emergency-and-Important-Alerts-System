@@ -110,7 +110,7 @@ class CustomSidebar extends HTMLElement {
           <a href="sendAlert.html" class="menu-item"><i data-feather="send"></i><span>Send Alert</span></a>
           <a href="#" class="menu-item"><i data-feather="check-square"></i><span>Acknowledgment</span></a>
           <a href="sosMonitoring.html" class="menu-item"><i data-feather="alert-triangle"></i><span>SOS Monitoring</span></a>
-          <a href="#" class="menu-item"><i data-feather="users"></i><span>User Management</span></a>
+          <a href="admin_hotlines.html" class="menu-item"><i data-feather="users"></i><span>Emergency Hotlines</span></a>
           <a href="#" class="menu-item"><i data-feather="mail"></i><span>Communications</span></a>
           <a href="adminAck.html" class="menu-item"><i data-feather="mail"></i><span>Alerts Acknowledgement</span></a>
           <a href="#" class="menu-item"><i data-feather="activity"></i><span>Analytics</span></a>

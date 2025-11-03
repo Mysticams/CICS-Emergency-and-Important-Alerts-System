@@ -93,7 +93,7 @@ class CustomSidebar extends HTMLElement {
           <a href="userAck.html" class="menu-item"><i data-feather="alert-triangle"></i><span>Acknowledgement</span></a>
           <a href="sosLogs.html" class="menu-item"><i data-feather="file-text"></i><span>SOS Logs</span></a>
           <a href="incidentReport.html" class="menu-item"><i data-feather="clipboard"></i><span>Incident Report</span></a>
-          <a href="emergencyhotline.html" class="menu-item"><i data-feather="phone-call"></i><span>Emergency Hotlines</span></a>
+          <a href="user_hotlines.html" class="menu-item"><i data-feather="phone-call"></i><span>Emergency Hotlines</span></a>
           <a href="profile.html" class="menu-item"><i data-feather="user"></i><span>Profile</span></a>
           <div class="menu-divider"></div>
           <a href="#" class="menu-item"><i data-feather="log-out"></i><span>Logout</span></a>
