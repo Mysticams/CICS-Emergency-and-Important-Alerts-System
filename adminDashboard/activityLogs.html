@@ -13,8 +13,14 @@
   body {
     background: #f3f4f6;
   }
+
+  /* Replaced Tailwind @apply with normal CSS */
   .badge {
-    @apply inline-block px-3 py-1 rounded-full text-sm font-medium;
+    display: inline-block;
+    padding: 0.25rem 0.75rem; /* px-3 py-1 */
+    border-radius: 9999px; /* rounded-full */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
   }
 </style>
 </head>
@@ -91,7 +97,7 @@ userActivityLogs = [
 
 let userActivityLogs = JSON.parse(localStorage.getItem("userActivityLogs") || "[]");
 
-// Sample demo data if empty
+// Demo data if empty
 if (userActivityLogs.length === 0) {
   userActivityLogs = [
     {
@@ -133,7 +139,7 @@ function renderUserLogs() {
   // Populate user filter options
   const uniqueUsers = [...new Set(userActivityLogs.map(log => log.username))];
   const userSelect = document.getElementById("filterUser");
-  userSelect.innerHTML = '<option value=\"\">All Users</option>' + uniqueUsers.map(u => `<option>${u}</option>`).join("");
+  userSelect.innerHTML = '<option value="">All Users</option>' + uniqueUsers.map(u => `<option>${u}</option>`).join("");
 
   const filteredLogs = userActivityLogs.filter(log => {
     const text = (log.username + log.action + log.alertId + log.status + log.remarks).toLowerCase();
@@ -149,7 +155,9 @@ function renderUserLogs() {
         ? "bg-green-100 text-green-800"
         : log.status === "Active"
         ? "bg-yellow-100 text-yellow-800"
-        : "bg-blue-100 text-blue-800";
+        : log.status === "In Progress"
+        ? "bg-blue-100 text-blue-800"
+        : "bg-gray-100 text-gray-800";
 
     const tr = document.createElement("tr");
     tr.className = "border-b hover:bg-gray-50 transition";
@@ -166,7 +174,8 @@ function renderUserLogs() {
     tbody.appendChild(tr);
   });
 
-  document.getElementById("entryCount").textContent = `Showing ${filteredLogs.length} of ${userActivityLogs.length} entries`;
+  document.getElementById("entryCount").textContent = 
+    `Showing ${filteredLogs.length} of ${userActivityLogs.length} entries`;
 }
 
 // Clear logs
